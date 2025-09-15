@@ -1,5 +1,8 @@
 package local.code_compass_backend.database.entity;
+
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "topic")
@@ -15,7 +18,12 @@ public class TopicEntity {
     @Column(length = 500)
     private String description;
 
-    // Getters and setters
+
+   // todo get this working: @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true);
+
+    // private List<SubTopicEntity> subTopicEntity = new ArrayList<>();
+
+    // getters/setters
     public Long getId() {
         return id;
     }
@@ -38,6 +46,18 @@ public class TopicEntity {
 
     public void setDescription(String description) {
         this.description = description;
+
+
+ /*   public void addSubtopic(SubTopicEntity s) {
+        subTopicEntity.add(s);
+        s.setTopicEntity(this);
+    }
+
+    public void removeSubtopic(SubTopicEntity s) {
+        subTopicEntity.remove(s);
+        s.setTopicEntity(null);
+    }*/
+
     }
 }
 

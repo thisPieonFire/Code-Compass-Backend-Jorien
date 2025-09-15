@@ -16,13 +16,7 @@ public class SubTopicEntity {
     @Column(length = 500)
     private String description;
 
- /*   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "topic_id", nullable = false)*/
-  //  private TopicEntity topic;
-
-
     // getters/setters*/
-
     public Long getId() {
         return id;
     }
@@ -46,8 +40,4 @@ public class SubTopicEntity {
     public void setName(String name) {
         this.name = name;
     }
-
-
-
-
 }

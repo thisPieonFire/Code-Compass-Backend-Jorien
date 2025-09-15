@@ -24,7 +24,6 @@ public class TopicService {
     public TopicDto getTopic (Long id) {
         TopicEntity topicEntity = topicRepository.findById(id).orElse(null);
         return topicMapper.mapToTopicDto(topicEntity);
-
     }
 
 

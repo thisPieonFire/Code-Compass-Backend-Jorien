@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "topic")
+@Table(name = "topics")
 public class TopicEntity {
 
     @Id
@@ -46,18 +46,6 @@ public class TopicEntity {
 
     public void setDescription(String description) {
         this.description = description;
-
-
- /*   public void addSubtopic(SubTopicEntity s) {
-        subTopicEntity.add(s);
-        s.setTopicEntity(this);
-    }
-
-    public void removeSubtopic(SubTopicEntity s) {
-        subTopicEntity.remove(s);
-        s.setTopicEntity(null);
-    }*/
-
     }
 }
 

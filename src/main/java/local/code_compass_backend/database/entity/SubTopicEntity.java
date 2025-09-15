@@ -7,16 +7,18 @@ import jakarta.persistence.*;
 
 public class SubTopicEntity {
 
+
    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+/*
     @Column(nullable = false)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "topic_id", nullable = false)
     private TopicEntity topic;
+*/
 
     // getters/setters*/
 

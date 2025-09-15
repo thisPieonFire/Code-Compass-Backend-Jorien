@@ -13,14 +13,14 @@ public class ProfileController {
  @Autowired
     private ProfileService profileService;
 
- //get the input
+    @PostMapping ("/login") //Checks if the email address is registered at all. Current status: gives no response when there is a registered email
+    public void validateLogIn(@RequestBody ProfileDto profileDto) {
+        profileService.validateLogIn(profileDto);
+    }
 
-   /* @PostMapping ("/api/login")
-    public void loginAuthentication(@RequestBody ProfileDto profileDto) {
-        profileService.loginAuthentication(profileDto);
+    //TODO "/me" geeft profielinfo terug (id, role, display_name) of 401
+    //TODO "/logout" wist de cookie
 
-    }*/
-
-
-
+    //gebruiker aanmaken = iemand registreert zich, dan moet de backend een bericht sturen naar SupaBase met "registreer deze gebruiker"
+    //de UUID die dan terugkomt moet de UserId worden, dit is een 1 op 1 relatie (Dat is dus die PK/FK relatie)
 }

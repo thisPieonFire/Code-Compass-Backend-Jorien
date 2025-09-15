@@ -10,6 +10,7 @@ import java.time.Instant;
      @Id
      @Column(nullable = false, length = 36)
      private String id;  // Supabase UID als primary key
+    //todo: make this: PK=FK naar auth.users(id)
 
      @Column(length = 500)
      private String displayName;
@@ -17,6 +18,9 @@ import java.time.Instant;
     @Enumerated(EnumType.STRING)
      @Column(nullable = false)
      private Role role;
+
+    @Column (nullable = false, unique = true)
+    private String email;
 
      @Column (nullable = false)
      private Instant createdAt;
@@ -60,6 +64,13 @@ import java.time.Instant;
      public void setRole(Role role) {
          this.role = role;
      }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
      public Instant getCreatedAt() {
          return createdAt;

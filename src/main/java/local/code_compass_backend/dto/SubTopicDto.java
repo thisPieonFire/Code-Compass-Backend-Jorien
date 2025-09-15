@@ -1,27 +1,9 @@
-package local.code_compass_backend.database.entity;
+package local.code_compass_backend.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "subtopics")
-
-public class SubTopicEntity {
-   @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class SubTopicDto {
     private Long id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(length = 500)
     private String description;
-
- /*   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "topic_id", nullable = false)*/
-  //  private TopicEntity topic;
-
-
-    // getters/setters*/
 
     public Long getId() {
         return id;
@@ -46,8 +28,4 @@ public class SubTopicEntity {
     public void setName(String name) {
         this.name = name;
     }
-
-
-
-
 }

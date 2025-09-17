@@ -19,7 +19,7 @@ public class TopicEntity {
     private String description;
 
 
-   // todo get this working: @OneToMany(mappedBy = "topics, cascade = CascadeType.ALL, orphanRemoval = true);
+   // get this working: @OneToMany(mappedBy = "topics, cascade = CascadeType.ALL, orphanRemoval = true);
 
     // private List<SubTopicEntity> subTopicEntity = new ArrayList<>();
 

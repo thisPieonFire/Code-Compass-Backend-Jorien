@@ -13,3 +13,8 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
+supabase:
+  auth-url: https://wlyfeciabevxeodttvye.supabase.co
+  api-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndseWZlY2lhYmV2eGVvZHR0dnllIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzY2NTYyMiwiZXhwIjoyMDczMjQxNjIyfQ.WfT_Vs31RRhZELlQWWrutGMgC0HnkfCJ1NcrQxGYXvg

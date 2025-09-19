@@ -24,9 +24,12 @@ public class AuthController {
     @PostMapping("/api/login")
     public ResponseEntity<?> authenticateAdmin(@RequestBody AuthDto authDto) {
         SBAuthClient.AuthResult auth = authService.authenticateAdmin(authDto);
-            return cookieUtil
-                .setJwtCookie(ResponseEntity.ok(), auth.getAccessToken())
-                .body("Admin, welcome!");
+        AuthService.LoginResult result = authService.loginAdmin(authDto);
+       // LoginResponse body = new LoginResponse(result.email(), result.displayName());
+        return cookieUtil
+                .setJwtCookie(ResponseEntity.ok(), result.accessToken())
+                .body (new User(result.email(), result.displayName()));
+    }
 
     }
 }

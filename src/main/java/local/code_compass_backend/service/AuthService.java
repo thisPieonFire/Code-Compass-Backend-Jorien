@@ -20,30 +20,37 @@ public class AuthService {
     public record LoginResult(String accessToken, String email, String displayName) {}
 
 
-    public LoginResult loginAdmin(AuthDto authDto) {
-        SBAuthClient.AuthResult auth = authenticateAdmin(authDto);
-        var profile = profileRepository.findById(auth.getUserId())
+    public LoginResult loginResult(AuthDto authDto) {
+        SBAuthClient.AuthResult userLogin = authenticateUser(authDto);
+        var profile = profileRepository.findById(userLogin.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profiel niet gevonden"));
-        return new LoginResult(auth.getAccessToken(), profile.getEmail(), profile.getDisplayName());
+        ////Deze error gaat hij niet gooien, want die wordt al gevangen bij de ongeldige inloggegevens
+        //// todo deze error naar beneden verplaatsen
+        return new LoginResult(userLogin.getAccessToken(), profile.getEmail(), profile.getDisplayName());
     }
-    public SBAuthClient.AuthResult authenticateAdmin(AuthDto authDto) {
+
+    public SBAuthClient.AuthResult authenticateUser(AuthDto authDto) {
         if (authDto == null || authDto.getEmail() == null || authDto.getEmail().isBlank()
                 || authDto.getPassword() == null || authDto.getPassword().isBlank()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Voer je gegevens in.");
         }
 
-        SBAuthClient.AuthResult auth;
+
+        SBAuthClient.AuthResult authenticationResult;
         try {
-            auth = sbAuthClient.authenticateAndGetUser(authDto.getEmail(), authDto.getPassword());
+            authenticationResult = sbAuthClient.authenticateAndGetUser(authDto.getEmail(), authDto.getPassword());
         } catch (HttpStatusCodeException | IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ongeldige inloggegevens.");
         }
 
-        boolean isAdmin = profileRepository.existsByIdAndRole(auth.getUserId(), Role.ADMIN);
-        if (!isAdmin) {
+        /*var profileExists = profileRepository.findById(authenticationResult.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profiel niet gevonden"));
+        */
+        boolean isAdmin = profileRepository.existsByIdAndRole(authenticationResult.getUserId(), Role.ADMIN);
+                if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Onvoldoende rechten.");
         }
-        return auth;
+        return authenticationResult;
     }
 
 }

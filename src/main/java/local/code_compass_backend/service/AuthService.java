@@ -21,16 +21,20 @@ public class AuthService {
 
 
     public LoginResult loginResult(AuthDto authDto) {
-        SBAuthClient.AuthResult userLogin = authenticateAdmin(authDto);
+        SBAuthClient.AuthResult userLogin = authenticateUser(authDto);
         var profile = profileRepository.findById(userLogin.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profiel niet gevonden"));
+        ////Deze error gaat hij niet gooien, want die wordt al gevangen bij de ongeldige inloggegevens
+        //// todo deze error naar beneden verplaatsen
         return new LoginResult(userLogin.getAccessToken(), profile.getEmail(), profile.getDisplayName());
     }
-    public SBAuthClient.AuthResult authenticateAdmin(AuthDto authDto) {
+
+    public SBAuthClient.AuthResult authenticateUser(AuthDto authDto) {
         if (authDto == null || authDto.getEmail() == null || authDto.getEmail().isBlank()
                 || authDto.getPassword() == null || authDto.getPassword().isBlank()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Voer je gegevens in.");
         }
+
 
         SBAuthClient.AuthResult authenticationResult;
         try {
@@ -39,9 +43,11 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ongeldige inloggegevens.");
         }
 
-
+        /*var profileExists = profileRepository.findById(authenticationResult.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profiel niet gevonden"));
+        */
         boolean isAdmin = profileRepository.existsByIdAndRole(authenticationResult.getUserId(), Role.ADMIN);
-        if (!isAdmin) {
+                if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Onvoldoende rechten.");
         }
         return authenticationResult;

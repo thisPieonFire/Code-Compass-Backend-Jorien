@@ -25,8 +25,7 @@ public class AuthService {
 
         var profileInformation = profileRepository.findById(authenticationDetails.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profiel niet gevonden"));
-        //dit is die mini-dto die de AI heeft gemaakt! todo? vervangen voor een echte dto -> profileDto
-        return new LoginResult(authenticationDetails.getAccessToken(), profileInformation.getEmail(), profileInformation.getDisplayName());
+            return new LoginResult(authenticationDetails.getAccessToken(), profileInformation.getEmail(), profileInformation.getDisplayName());
     }
 
     public SBAuthClient.AuthenticationDetails authenticateUser(LoginDto loginDto) {

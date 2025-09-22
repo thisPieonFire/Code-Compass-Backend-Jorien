@@ -1,7 +1,7 @@
 package local.code_compass_backend.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import local.code_compass_backend.dto.AuthDto;
+import local.code_compass_backend.dto.LoginDto;
 import local.code_compass_backend.service.AuthService;
 import local.code_compass_backend.utility.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ public class AuthController {
     private record LoginResponse(User user) {}
 
     @PostMapping("/api/login")
-    public ResponseEntity<?> loginResult(@RequestBody AuthDto authDto) {
-        AuthService.LoginResult result = authService.loginResult(authDto);
+    public ResponseEntity<?> loginResult(@RequestBody LoginDto loginDto) {
+        AuthService.LoginResult result = authService.loginResult(loginDto);
         LoginResponse body = new LoginResponse(new User(result.email(), result.displayName()));
         return cookieUtil
                 .setJwtCookie(ResponseEntity.ok(), result.accessToken())

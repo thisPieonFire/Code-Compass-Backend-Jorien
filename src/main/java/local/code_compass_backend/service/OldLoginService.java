@@ -2,14 +2,13 @@ package local.code_compass_backend.service;
 
 import local.code_compass_backend.database.repository.ProfileRepository;
 import local.code_compass_backend.dto.ProfileDto;
-import local.code_compass_backend.mapper.ProfileMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class LoginService {
+public class OldLoginService {
 
     @Autowired
     private ProfileRepository profileRepository;

@@ -10,7 +10,7 @@ public class ProfileEntity {
     @Id
     @Column(nullable = false, length = 36)
     private String id;  // Supabase UID als primary key
-    //todo: make this: PK=FK naar auth.users(id)
+
 
     @Column(length = 500)
     private String displayName;

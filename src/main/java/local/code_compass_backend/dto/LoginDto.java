@@ -1,6 +1,6 @@
 package local.code_compass_backend.dto;
 
-public class AuthDto {
+public class LoginDto {
     private String email;
     private String password;
 

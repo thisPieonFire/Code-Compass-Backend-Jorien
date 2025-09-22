@@ -23,7 +23,7 @@ public class SBAuthClient {
 
 
 
-    public AuthResult authenticateAndGetUser(String email, String password) {
+    public AuthenticationDetails authenticateAndGetUser(String email, String password) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("apikey", supabaseApiKey);
@@ -35,7 +35,8 @@ public class SBAuthClient {
             ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
             Map<?, ?> resp = response.getBody();
             if (resp == null)
-                throw new IllegalStateException("Lege response van Auth API");
+                throw new IllegalStateException("Lege response van Authentication API");
+        //todo hier moet nog een mapper tussen
 
         Object tokenObj = resp.get("access_token");
         String accessToken = (tokenObj instanceof String s && !s.isBlank()) ? s : null;
@@ -51,18 +52,18 @@ public class SBAuthClient {
         }
 
         if (userId == null || accessToken == null) {
-            throw new IllegalStateException("Ongeldige Auth response: ontbrekende userId of access token");
+            throw new IllegalStateException("Ongeldige Authentication response: ontbrekende userId of access token");
         }
 
-        return new AuthResult(userId, accessToken);
+        return new AuthenticationDetails(userId, accessToken);
     }
 
 
-    public final class AuthResult {
+    public final class AuthenticationDetails {
         private final String userId;
         private final String accessToken;
 
-        public AuthResult(String userId, String accessToken) {
+        public AuthenticationDetails(String userId, String accessToken) {
             this.userId = userId;
             this.accessToken = accessToken;
         }
@@ -76,3 +77,4 @@ public class SBAuthClient {
         }
     }
 }
+

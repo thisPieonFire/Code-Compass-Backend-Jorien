@@ -17,6 +17,7 @@ public class SBAuthClient {
 
     @Value("${supabase.auth-url}")
     private String supabaseAuthUrl;
+    //todo get the .env to work
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -72,8 +73,6 @@ public class SBAuthClient {
 
         public String getAccessToken() {
             return accessToken;
-
-
         }
     }
 }

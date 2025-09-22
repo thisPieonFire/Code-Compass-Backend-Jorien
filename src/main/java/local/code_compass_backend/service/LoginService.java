@@ -1,6 +1,5 @@
 package local.code_compass_backend.service;
 
-import local.code_compass_backend.database.entity.ProfileEntity;
 import local.code_compass_backend.database.repository.ProfileRepository;
 import local.code_compass_backend.dto.ProfileDto;
 import local.code_compass_backend.mapper.ProfileMapper;
@@ -14,8 +13,6 @@ public class LoginService {
 
     @Autowired
     private ProfileRepository profileRepository;
-    @Autowired
-    private ProfileMapper profileMapper;
 
     public void validateLogIn(ProfileDto profileDto) {
         if (profileDto == null || profileDto.getEmail() == null || profileDto.getEmail().isBlank()) {
@@ -27,10 +24,4 @@ public class LoginService {
         }
         // Bestaat: niets teruggeven, geen mutaties uitvoeren
     }
-
-/*    public ProfileDto personalInformation () {
-          ProfileEntity profileEntity = profileRepository.findById(id).orElse(Null);
-          return profileMapper.mapToProfileDto(profileEntity.);
-    }
-    */
-  }
+}

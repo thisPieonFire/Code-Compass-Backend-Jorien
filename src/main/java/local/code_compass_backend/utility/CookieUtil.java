@@ -14,7 +14,7 @@ public class CookieUtil {
                 .secure(true)
                 .path("/")
                 .maxAge(60 * 60)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
     }
     public ResponseEntity.BodyBuilder setJwtCookie(ResponseEntity.BodyBuilder builder, String token) {
@@ -29,7 +29,7 @@ public class CookieUtil {
                 .secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
     }
 

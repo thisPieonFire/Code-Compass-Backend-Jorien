@@ -21,7 +21,7 @@ public class LoginController {
     @Autowired
     private CookieUtil cookieUtil;
 
-    @PostMapping ("/api/trainee_login") //Checks if the email address is registered at all. Current status: gives no response when there is a registered email
+    @PostMapping ("/api/trainee_login")
     public ResponseEntity<Void>  validateLogIn(@RequestBody ProfileDto profileDto) {
         loginService.validateLogIn(profileDto);
         return ResponseEntity.ok().build();
@@ -36,12 +36,7 @@ public class LoginController {
                 .body("Logged out");
     }
 
-/*
-//TODO "/api/me" geeft profielinfo terug (id, role, display_name) of 401 (met getForObject()?)
-    @GetMapping("/api/me")
-    public ResponseEntity<?> personalInformation(@RequestBody ProfileDto profileDto) {
-        return ResponseEntity.ok().build();
-    }*/
+
 
 
 

@@ -50,11 +50,10 @@ public class SBAuthClient {
         }
 
         if (userId == null || accessToken == null) {
-            throw new IllegalStateException("Ongeldige Auth response: ontbrekende userId of access_token");
+            throw new IllegalStateException("Ongeldige Auth response: ontbrekende userId of access token");
         }
 
         return new AuthResult(userId, accessToken);
-        //todo dit omzetten naar een aparte DTO
     }
 
 

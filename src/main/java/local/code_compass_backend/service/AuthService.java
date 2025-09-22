@@ -17,7 +17,15 @@ public class AuthService {
 
     @Autowired
     private SBAuthClient sbAuthClient;
+    public record LoginResult(String accessToken, String email, String displayName) {}
 
+
+    public LoginResult loginAdmin(AuthDto authDto) {
+        SBAuthClient.AuthResult auth = authenticateAdmin(authDto);
+        var profile = profileRepository.findById(auth.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profiel niet gevonden"));
+        return new LoginResult(auth.getAccessToken(), profile.getEmail(), profile.getDisplayName());
+    }
     public SBAuthClient.AuthResult authenticateAdmin(AuthDto authDto) {
         if (authDto == null || authDto.getEmail() == null || authDto.getEmail().isBlank()
                 || authDto.getPassword() == null || authDto.getPassword().isBlank()) {
@@ -36,6 +44,6 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Onvoldoende rechten.");
         }
         return auth;
-
     }
+
 }

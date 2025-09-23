@@ -26,8 +26,8 @@ public class AuthController {
     private record LoginResponse(User user) {}
 
     @PostMapping("/api/login")
-    public ResponseEntity<?> loginResult(@RequestBody LoginDto loginDto) {
-        AuthService.LoginResult result = authService.loginResult(loginDto);
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        AuthService.Login result = authService.login(loginDto);
         LoginResponse body = new LoginResponse(new User(result.email(), result.displayName()));
         return cookieUtil
                 .setJwtCookie(ResponseEntity.ok(), result.accessToken())

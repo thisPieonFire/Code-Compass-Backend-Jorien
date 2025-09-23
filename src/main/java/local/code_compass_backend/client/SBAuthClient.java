@@ -1,10 +1,9 @@
 package local.code_compass_backend.client;
 
+import local.code_compass_backend.dto.AuthResponseDto;
+import local.code_compass_backend.dto.LoginDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import java.util.Map;
@@ -19,62 +18,57 @@ public class SBAuthClient {
     private String supabaseAuthUrl;
     //todo get the .env to work
 
+
     private final RestTemplate restTemplate = new RestTemplate();
 
+    public AuthenticationDetails authenticateAndGetUser(LoginDto loginDto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("apikey", supabaseApiKey);
+        String url = supabaseAuthUrl + "/auth/v1/token?grant_type=password";
+        HttpEntity<LoginDto> request = new HttpEntity<>(loginDto, headers);
 
+        ResponseEntity<AuthResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, request, AuthResponseDto.class);
+        AuthResponseDto authResponseDto = response.getBody();
+        if (authResponseDto == null)
+            throw new IllegalStateException("Lege response van Authentication API");
 
-    public AuthenticationDetails authenticateAndGetUser(String email, String password) {
+        String userId = authResponseDto.getUser().getId();
+        String accesToken = authResponseDto.getAccessToken();
+
+        return new AuthenticationDetails(userId, accesToken);
+    }
+    public record AuthenticationDetails(String userId, String accessToken) {}
+
+    public CreationResponse validateAndCreateNewUser (String email, String displayName, String role) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("apikey", supabaseApiKey);
 
-        Map<String, Object> body = Map.of("email", email, "password", password);
+        Map<String, Object> body = Map.of("email", email, "displayName", displayName, "role", role);
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-        String url = supabaseAuthUrl + "/auth/v1/token?grant_type=password";
+        String url = supabaseAuthUrl + "/auth/v1/signup";
 
-            ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
-            Map<?, ?> resp = response.getBody();
-            if (resp == null)
-                throw new IllegalStateException("Lege response van Authentication API");
-        //todo hier moet nog een mapper tussen
-
-        Object tokenObj = resp.get("access_token");
-        String accessToken = (tokenObj instanceof String s && !s.isBlank()) ? s : null;
-
-
-        Object userObj = resp.get("user");
-        String userId = null;
-        if (userObj instanceof Map<?, ?> userMap) {
-            Object idObj = userMap.get("id");
-            if (idObj instanceof String id && !id.isBlank()) {
-                userId = id;
-            }
-        }
-
-        if (userId == null || accessToken == null) {
-            throw new IllegalStateException("Ongeldige Authentication response: ontbrekende userId of access token");
-        }
-
-        return new AuthenticationDetails(userId, accessToken);
+        return new CreationResponse(email, displayName);
+// er moet een standaard wachtwoord worden toegevoegd aan de oproep naar SB
     }
 
+    public final class CreationResponse {
+        private final String email;
+        private final String displayName;
 
-    public final class AuthenticationDetails {
-        private final String userId;
-        private final String accessToken;
-
-        public AuthenticationDetails(String userId, String accessToken) {
-            this.userId = userId;
-            this.accessToken = accessToken;
+        public CreationResponse(String email, String displayName) {
+            this.email = email;
+            this.displayName = displayName;
         }
 
-        public String getUserId() {
-            return userId;
+        public String getEmail() {
+            return email;
         }
 
-        public String getAccessToken() {
-            return accessToken;
+        public String getDisplayName() {
+            return displayName;
         }
     }
+
 }
-

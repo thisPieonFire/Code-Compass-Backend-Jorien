@@ -3,7 +3,9 @@ package local.code_compass_backend.service;
 import local.code_compass_backend.client.SBAuthClient;
 import local.code_compass_backend.database.entity.Role;
 import local.code_compass_backend.database.repository.ProfileRepository;
+import local.code_compass_backend.dto.AuthResponseDto;
 import local.code_compass_backend.dto.LoginDto;
+import local.code_compass_backend.dto.ProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,15 +19,15 @@ public class AuthService {
 
     @Autowired
     private SBAuthClient sbAuthClient;
-    public record LoginResult(String accessToken, String email, String displayName) {}
+    public record Login(String accessToken, String email, String displayName) {}
+    public record CreateNewUser(String email, String displayName) {}
 
 
-    public LoginResult loginResult(LoginDto loginDto) {
+    public Login login(LoginDto loginDto) {
         SBAuthClient.AuthenticationDetails authenticationDetails = authenticateUser(loginDto);
 
-        var profileInformation = profileRepository.findById(authenticationDetails.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profiel niet gevonden"));
-            return new LoginResult(authenticationDetails.getAccessToken(), profileInformation.getEmail(), profileInformation.getDisplayName());
+        var profileInformation = profileRepository.findById(authenticationDetails.userId()).get();
+            return new Login(authenticationDetails.accessToken(), profileInformation.getEmail(), profileInformation.getDisplayName());
     }
 
     public SBAuthClient.AuthenticationDetails authenticateUser(LoginDto loginDto) {
@@ -42,16 +44,38 @@ public class AuthService {
 
         SBAuthClient.AuthenticationDetails authenticationDetails;
         try {
-            authenticationDetails = sbAuthClient.authenticateAndGetUser(loginDto.getEmail(), loginDto.getPassword());
+            authenticationDetails = sbAuthClient.authenticateAndGetUser(loginDto);
         } catch (HttpStatusCodeException | IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ongeldige inloggegevens.");
         }
 
-        boolean isAdmin = profileRepository.existsByIdAndRole(authenticationDetails.getUserId(), Role.ADMIN);
+        boolean isAdmin = profileRepository.existsByIdAndRole(authenticationDetails.userId(), Role.ADMIN);
                 if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Onvoldoende rechten.");
         }
         return authenticationDetails;
     }
+
+/*    public CreateNewUser create(ProfileDto profileDto) {
+        SBAuthClient.CreationResponse creationResponse = validateUser(profileDto);
+
+        return new CreateNewUser(creationResponse.getEmail(), creationResponse.getDisplayName());
+    }
+
+    public SBAuthClient.CreationResponse validateUser (ProfileDto profileDto) {
+        *//*boolean profileExists = profileRepository.existsByEmail(profileDto.getEmail());
+        if (profileExists) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Emailadres is al geregistreerd.");
+        }*//*
+
+        SBAuthClient.CreationResponse creationResponse;
+        try{
+            creationResponse =sbAuthClient.validateAndCreateNewUser(profileDto.getEmail(), profileDto.getDisplayName(), profileDto.getRole()); //dit is de enum, nu gaat het fout
+        } catch (HttpStatusCodeException|IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ongeldige gegevens."); //nog niet helemaal, maar goed genoeg
+        }
+        return creationResponse;
+    }*/
+
 
 }

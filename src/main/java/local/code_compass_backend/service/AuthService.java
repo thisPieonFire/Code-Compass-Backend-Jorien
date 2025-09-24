@@ -3,9 +3,8 @@ package local.code_compass_backend.service;
 import local.code_compass_backend.client.SBAuthClient;
 import local.code_compass_backend.database.entity.Role;
 import local.code_compass_backend.database.repository.ProfileRepository;
-import local.code_compass_backend.dto.AuthResponseDto;
+import local.code_compass_backend.dto.CreateUserDto;
 import local.code_compass_backend.dto.LoginDto;
-import local.code_compass_backend.dto.ProfileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,6 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Geen geregistreerd emailadres gevonden.");
         }
 
-
         SBAuthClient.AuthenticationDetails authenticationDetails;
         try {
             authenticationDetails = sbAuthClient.authenticateAndGetUser(loginDto);
@@ -56,26 +54,21 @@ public class AuthService {
         return authenticationDetails;
     }
 
-/*    public CreateNewUser create(ProfileDto profileDto) {
-        SBAuthClient.CreationResponse creationResponse = validateUser(profileDto);
+    public CreateNewUser createNewUser(CreateUserDto createUserDto) {
+        SBAuthClient.CreationDetails creationDetails = validateUser(createUserDto);
 
-        return new CreateNewUser(creationResponse.getEmail(), creationResponse.getDisplayName());
+        return new CreateNewUser(creationDetails.email(), creationDetails.displayName());
     }
 
-    public SBAuthClient.CreationResponse validateUser (ProfileDto profileDto) {
-        *//*boolean profileExists = profileRepository.existsByEmail(profileDto.getEmail());
-        if (profileExists) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Emailadres is al geregistreerd.");
-        }*//*
-
-        SBAuthClient.CreationResponse creationResponse;
+    public SBAuthClient.CreationDetails validateUser (CreateUserDto createUserDto) {
+        SBAuthClient.CreationDetails creationDetails;
         try{
-            creationResponse =sbAuthClient.validateAndCreateNewUser(profileDto.getEmail(), profileDto.getDisplayName(), profileDto.getRole()); //dit is de enum, nu gaat het fout
+            creationDetails = sbAuthClient.validateAndCreateNewUser(createUserDto);
         } catch (HttpStatusCodeException|IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Ongeldige gegevens."); //nog niet helemaal, maar goed genoeg
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        return creationResponse;
-    }*/
+        return creationDetails;
+    }
 
 
 }

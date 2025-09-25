@@ -16,6 +16,8 @@ import java.util.Map;
 public class SBAuthClient {
     @Value("${supabase.api-key}")
     private String supabaseApiKey;
+    @Value("${supabase.service-role-key}")
+    private String supabaseServiceRoleKey;
     @Value("${supabase.auth-url}")
     private String supabaseAuthUrl;
     //todo get the .env to work
@@ -75,14 +77,23 @@ public class SBAuthClient {
     }
 
     private void setRole(String userId) {
-
         String patchUrl = supabaseAuthUrl + "/auth/v1/admin/users/" + userId;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(supabaseApiKey);
+        headers.set("apikey", supabaseServiceRoleKey);
+        headers.setBearerAuth(supabaseServiceRoleKey);
+        
         Map<String, Object> patch = Map.of("app_metadata", Map.of("role", "TRAINEE"));
         HttpEntity<Map<String, Object>> patchReq = new HttpEntity<>(patch, headers);
-        restTemplate.exchange(patchUrl, HttpMethod.PUT, patchReq, String.class);
+        
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(patchUrl, HttpMethod.PUT, patchReq, String.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new IllegalStateException("Failed to set user role: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Error setting user role: " + e.getMessage(), e);
+        }
     }
 
     public record CreationDetails(String email, String displayName) {}

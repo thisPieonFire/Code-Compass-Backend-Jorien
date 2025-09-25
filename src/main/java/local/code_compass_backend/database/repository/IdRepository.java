@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface ProfileRepository extends JpaRepository<ProfileEntity, String> {
+public interface IdRepository extends JpaRepository<ProfileEntity, UUID> {
 
-    boolean existsByEmail(String email); //used for checking if an email is already registered
+    boolean existsByIdAndRole(UUID id, Role role);
 
 }

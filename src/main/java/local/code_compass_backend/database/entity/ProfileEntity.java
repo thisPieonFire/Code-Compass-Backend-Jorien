@@ -2,14 +2,15 @@ package local.code_compass_backend.database.entity;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "profile")
 public class ProfileEntity {
 
     @Id
-    @Column(nullable = false, length = 36)
-    private String id;  // Supabase UID als primary key
+    @Column(nullable = false, name="id")
+    private UUID id;  // Supabase UID als primary key
 
 
     @Column(length = 500)
@@ -17,7 +18,7 @@ public class ProfileEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.TRAINEE;
 
     @Column (nullable = false, unique = true)
     private String email;
@@ -42,10 +43,10 @@ public class ProfileEntity {
         this.updatedAt = Instant.now();
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

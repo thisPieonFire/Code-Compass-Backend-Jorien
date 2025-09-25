@@ -2,6 +2,7 @@ package local.code_compass_backend.service;
 
 import local.code_compass_backend.client.SBAuthClient;
 import local.code_compass_backend.database.entity.Role;
+import local.code_compass_backend.database.repository.IdRepository;
 import local.code_compass_backend.database.repository.ProfileRepository;
 import local.code_compass_backend.dto.CreateUserDto;
 import local.code_compass_backend.dto.LoginDto;
@@ -11,10 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
+
+import java.util.UUID;
+
 @Service
 public class AuthService {
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private IdRepository idRepository;
 
     @Autowired
     private SBAuthClient sbAuthClient;
@@ -25,7 +32,7 @@ public class AuthService {
     public Login login(LoginDto loginDto) {
         SBAuthClient.AuthenticationDetails authenticationDetails = authenticateUser(loginDto);
 
-        var profileInformation = profileRepository.findById(authenticationDetails.userId()).get();
+        var profileInformation = idRepository.findById(UUID.fromString(authenticationDetails.userId())).get();
             return new Login(authenticationDetails.accessToken(), profileInformation.getEmail(), profileInformation.getDisplayName());
     }
 
@@ -47,7 +54,7 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ongeldige inloggegevens.");
         }
 
-        boolean isAdmin = profileRepository.existsByIdAndRole(authenticationDetails.userId(), Role.ADMIN);
+        boolean isAdmin = idRepository.existsByIdAndRole(UUID.fromString(authenticationDetails.userId()), Role.ADMIN);
                 if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Onvoldoende rechten.");
         }

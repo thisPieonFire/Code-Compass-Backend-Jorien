@@ -1,8 +1,9 @@
 package local.code_compass_backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+//todo aparte class voor User
 
-public class AuthResponseDto {
+public class LoginResponseDto {
     @JsonProperty("access_token")
     private String accessToken;
 

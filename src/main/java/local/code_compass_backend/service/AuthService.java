@@ -1,11 +1,12 @@
 package local.code_compass_backend.service;
 
 import local.code_compass_backend.client.SBAuthClient;
-import local.code_compass_backend.database.entity.Role;
 import local.code_compass_backend.database.repository.IdRepository;
 import local.code_compass_backend.database.repository.ProfileRepository;
 import local.code_compass_backend.dto.CreateUserDto;
 import local.code_compass_backend.dto.LoginDto;
+import local.code_compass_backend.dto.NewUserResult;
+import local.code_compass_backend.dto.RegisterResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -53,28 +54,28 @@ public class AuthService {
         } catch (HttpStatusCodeException | IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Ongeldige inloggegevens.");
         }
+        ////als de email niet is bevestigd krijg je ook een error, maar die wordt dus ook naar hierboven gegooid
 
-        boolean isAdmin = idRepository.existsByIdAndRole(UUID.fromString(authenticationDetails.userId()), Role.ADMIN);
+      /*  boolean isAdmin = idRepository.existsByIdAndRole(UUID.fromString(authenticationDetails.userId()), Role.ADMIN);
                 if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Onvoldoende rechten.");
-        }
+        }*/
         return authenticationDetails;
     }
 
-    public CreateNewUser createNewUser(CreateUserDto createUserDto) {
-        SBAuthClient.CreationDetails creationDetails = validateUser(createUserDto);
-
-        return new CreateNewUser(creationDetails.email(), creationDetails.displayName());
+    public NewUserResult createNewUser(CreateUserDto createUserDto) {
+        RegisterResponseDto responseDto = validateUser(createUserDto);
+        return new NewUserResult(responseDto);
     }
 
-    public SBAuthClient.CreationDetails validateUser (CreateUserDto createUserDto) {
-        SBAuthClient.CreationDetails creationDetails;
+    public RegisterResponseDto validateUser (CreateUserDto createUserDto) {
+        RegisterResponseDto registerResponseDto;
         try{
-            creationDetails = sbAuthClient.validateAndCreateNewUser(createUserDto);
+            registerResponseDto = sbAuthClient.validateAndCreateNewUser(createUserDto);
         } catch (HttpStatusCodeException|IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        return creationDetails;
+        return registerResponseDto;
     }
 
 

@@ -1,10 +1,6 @@
 package local.code_compass_backend.client;
 
-import local.code_compass_backend.database.repository.ProfileRepository;
-import local.code_compass_backend.dto.LoginResponseDto;
-import local.code_compass_backend.dto.CreateUserDto;
-import local.code_compass_backend.dto.LoginDto;
-import local.code_compass_backend.dto.RegisterResponseDto;
+import local.code_compass_backend.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -14,19 +10,16 @@ import java.util.Map;
 
 @Component
 public class SBAuthClient {
-    @Value("${supabase.api-key}")
+    @Value("${SUPABASE_ANON_KEY}")
     private String supabaseApiKey;
-    @Value("${supabase.service-role-key}")
+    @Value("${SUPABASE_SERVICE_ROLE_KEY}")
     private String supabaseServiceRoleKey;
-    @Value("${supabase.auth-url}")
+    @Value("${SUPABASE_AUTH_URL}")
     private String supabaseAuthUrl;
     //todo get the .env to work
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ProfileRepository profileRepository;
 
-    public SBAuthClient(ProfileRepository profileRepository) {
-        this.profileRepository = profileRepository;
-    }
+    private final RestTemplate restTemplate = new RestTemplate();
+
 
     public AuthenticationDetails authenticateAndGetUser(LoginDto loginDto) {
         HttpHeaders headers = new HttpHeaders();
@@ -49,7 +42,7 @@ public class SBAuthClient {
     public record AuthenticationDetails(String userId, String accessToken) {
     }
 
-    public CreationDetails validateAndCreateNewUser(CreateUserDto createUserDto) {
+    public RegisterResponseDto validateAndCreateNewUser(CreateUserDto createUserDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("apikey", supabaseApiKey);
@@ -62,41 +55,35 @@ public class SBAuthClient {
                 createUserDto.getPassword()
         );
         HttpEntity<SignUpRequest> request = new HttpEntity<>(body, headers);
-        //String testResponse = restTemplate.postForObject(url, request, String.class);
         ResponseEntity<RegisterResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, request, RegisterResponseDto.class);
         RegisterResponseDto registerResponseDto = response.getBody();
         if (registerResponseDto == null)
             throw new IllegalStateException("Lege response van Authentication API");
-        setRole(registerResponseDto.getId());
+       return setRoleAndDisplayName(registerResponseDto.getId(), createUserDto.getDisplayName());
 
 
-        String email = createUserDto.getEmail();
-        String displayName = createUserDto.getDisplayName();
-
-        return new CreationDetails(email, displayName);
+       // return registerResponseDto;
     }
 
-    private void setRole(String userId) {
+    private RegisterResponseDto setRoleAndDisplayName(String userId, String displayName) {
         String patchUrl = supabaseAuthUrl + "/auth/v1/admin/users/" + userId;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("apikey", supabaseServiceRoleKey);
         headers.setBearerAuth(supabaseServiceRoleKey);
         
-        Map<String, Object> patch = Map.of("app_metadata", Map.of("role", "TRAINEE"));
+        Map<String, Object> patch = Map.of("app_metadata", Map.of("role", "TRAINEE"), "user_metadata", Map.of("display_name", displayName));
         HttpEntity<Map<String, Object>> patchReq = new HttpEntity<>(patch, headers);
         
         try {
-            ResponseEntity<String> response = restTemplate.exchange(patchUrl, HttpMethod.PUT, patchReq, String.class);
+            ResponseEntity<RegisterResponseDto> response = restTemplate.exchange(patchUrl, HttpMethod.PUT, patchReq, RegisterResponseDto.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
-                throw new IllegalStateException("Failed to set user role: " + response.getStatusCode());
+                throw new IllegalStateException("Failed to update user: " + response.getStatusCode());
             }
+            return response.getBody();
         } catch (Exception e) {
-            throw new IllegalStateException("Error setting user role: " + e.getMessage(), e);
+            throw new IllegalStateException("Error updating user: " + e.getMessage(), e);
         }
-    }
 
-    public record CreationDetails(String email, String displayName) {}
-    public record SignUpRequest(String email, String password) {}
-    //todo aparte class maken hiervoor
+    }
 }

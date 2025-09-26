@@ -1,4 +1,3 @@
-// ... existing code ...
 package local.code_compass_backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,10 +22,10 @@ public class RegisterResponseDto {
     private String confirmationSentAt;
 
     @JsonProperty("app_metadata")
-    private Object appMetadata;
+    private AppMetadata appMetadata;
 
     @JsonProperty("user_metadata")
-    private Object userMetadata;
+    private UserMetadata userMetadata;
 
     @JsonProperty("identities")
     private Object identities;
@@ -91,19 +90,19 @@ public class RegisterResponseDto {
         this.confirmationSentAt = confirmationSentAt;
     }
 
-    public Object getAppMetadata() {
+    public AppMetadata getAppMetadata() {
         return appMetadata;
     }
 
-    public void setAppMetadata(Object appMetadata) {
+    public void setAppMetadata(AppMetadata appMetadata) {
         this.appMetadata = appMetadata;
     }
 
-    public Object getUserMetadata() {
+    public UserMetadata getUserMetadata() {
         return userMetadata;
     }
 
-    public void setUserMetadata(Object userMetadata) {
+    public void setUserMetadata(UserMetadata userMetadata) {
         this.userMetadata = userMetadata;
     }
 

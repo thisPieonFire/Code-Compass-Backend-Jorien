@@ -3,20 +3,21 @@ package local.code_compass_backend.dto;
 import local.code_compass_backend.database.entity.Role;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public class ProfileDto {
 
-    private String id;
+    private UUID id;
     private String displayName;
     private Role role;
     private String email;
     private Instant createdAt;
     private Instant updatedAt;
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

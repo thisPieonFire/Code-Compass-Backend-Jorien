@@ -1,11 +1,12 @@
 package local.code_compass_backend.mapper;
 
-import local.code_compass_backend.database.entity.ProfileEntity;
-import local.code_compass_backend.dto.ProfileDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProfileMapper {
+public class AuthMapper {
+
+    }
+/*
     public ProfileDto mapToProfileDto(ProfileEntity profileEntity) {
         ProfileDto profileDto = new ProfileDto();
         profileDto.setId(profileEntity.getId());
@@ -26,5 +27,4 @@ public class ProfileMapper {
         profileEntity.setCreatedAt(profileDto.getCreatedAt());
         profileEntity.setUpdatedAt(profileDto.getUpdatedAt());
         return profileEntity;
-    }
-}
+    }*/

@@ -16,7 +16,6 @@ public class SBAuthClient {
     private String supabaseServiceRoleKey;
     @Value("${SUPABASE_AUTH_URL}")
     private String supabaseAuthUrl;
-    //todo get the .env to work
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -60,9 +59,6 @@ public class SBAuthClient {
         if (registerResponseDto == null)
             throw new IllegalStateException("Lege response van Authentication API");
        return setRoleAndDisplayName(registerResponseDto.getId(), createUserDto.getDisplayName());
-
-
-       // return registerResponseDto;
     }
 
     private RegisterResponseDto setRoleAndDisplayName(String userId, String displayName) {

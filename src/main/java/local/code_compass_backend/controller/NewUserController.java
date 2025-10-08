@@ -7,6 +7,7 @@ import local.code_compass_backend.service.NewUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +26,8 @@ public class NewUserController {
     private record CreationResponse(User user) {}
 
     @PostMapping ("/api/users")
+   // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createNewUser(@RequestBody CreateUserDto createUserDto) {
-        // make it check the jwt for app_metadata().role() = ADMIN
         NewUserResult result = authService.createNewUser(createUserDto);
         newUserService.saveNewUserProfile(result.getRegisterResponseDto());
         CreationResponse body = new CreationResponse(

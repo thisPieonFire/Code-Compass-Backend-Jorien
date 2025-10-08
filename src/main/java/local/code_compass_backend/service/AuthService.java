@@ -27,8 +27,6 @@ public class AuthService {
     @Autowired
     private SBAuthClient sbAuthClient;
     public record Login(String accessToken, String email, String displayName) {}
-    public record CreateNewUser(String email, String displayName) {}
-
 
     public Login login(LoginDto loginDto) {
         SBAuthClient.AuthenticationDetails authenticationDetails = authenticateUser(loginDto);
@@ -56,10 +54,6 @@ public class AuthService {
         }
         ////als de email niet is bevestigd krijg je ook een error, maar die wordt dus ook naar hierboven gegooid
 
-      /*  boolean isAdmin = idRepository.existsByIdAndRole(UUID.fromString(authenticationDetails.userId()), Role.ADMIN);
-                if (!isAdmin) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Onvoldoende rechten.");
-        }*/
         return authenticationDetails;
     }
 
